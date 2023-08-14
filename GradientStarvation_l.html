@@ -1,0 +1,335 @@
+<!-- Code partly obtained from Deep playground
+at https://github.com/tensorflow/playground with Apache License 2.0 -->
+<!DOCTYPE html>
+<!-- saved from url=(0032)https://openai.com/blog/GradientStarvation/ -->
+<html lang="en" class="js"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-G2956GM9YZ"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-G2956GM9YZ');
+  </script>
+  <link rel="icon" href="./Mohammad_files/icon.png">
+  <!-- <script async="" src="./GradientStarvation_files/js"></script> -->
+
+  <title>Gradient Starvation</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="stylesheet" type="text/css" href="./GradientStarvation_files/all.css">
+
+  <!-- <link rel="stylesheet" href="bundle.css" type="text/css"> -->
+  <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500|Material+Icons" rel="stylesheet" type="text/css">
+  <script src="lib.js"></script>
+  <script src="https://d3js.org/d3.v3.min.js"></script>
+
+<!--   <script src="data.js"></script>
+  <script src="plotly-latest.min.js"></script>
+  <script src="bundle.js"></script>
+  <script src="analytics.js"></script>
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script type="text/javascript" id="MathJax-script" async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script> -->
+
+</head>
+
+<body class="browser-chrome os-mac-os engine-webkit">
+  
+<article class="post" id="post-GradientStarvation">
+  
+  <header class="post-header post-header--cover bg-light-warm-gray bg-cover" style="background-image:url(./GradientStarvation_files/k2.jpg)">
+  <div class="row py-10/12">
+  </div>
+</nav>
+
+
+  
+  <div class="container mt-10 mb-2 pb-1">
+    <div class="row">
+      <div class="col-12">
+        <div class="row">
+          <div class="col-6 col-xl-6 order-md-1">
+            <div class="sticky sticky-top mt-ngutter pt-gutter">
+
+          <div id="main-part" class="l--page">
+
+            <!-- Output Column -->
+            <div class="column output">
+              <div id="heatmap" style="float: center"></div>
+            </div>
+
+            <!-- curve Column -->
+            <div class="column curve">
+              <div id="linechart2">
+              </div><br></br>
+              <div id="linechart"></div><br></br>
+            </div>
+
+          </div>
+
+          <div id="main-part2" class="l--page">
+
+            <div id="top-caption">
+            This plot shows the evolution of the learned decision boundary and the corresponding features \(z_1\) and \(z_2\). Try this: With maximum "Separability" and "None" as the regularization, train for \(\sim\)100 iterations. You observe that an almost linear decision boundary is learned, discriminating only along the x-axis. Now change the regularization to our proposed "Spectral_Decoupling" and wait for another \(\sim\)100 iterations.</div>
+
+            <!-- Features Column -->
+            <div class="column features">
+              <div id="network"></div>
+                <!-- <svg id="svg" width="0" height="0"></svg> -->
+              <div class="timeline-controls">
+                <div id="Controls">Initialize:
+                <button class="mdl-button mdl-js-button mdl-button--icon ui-resetButton" id="reset-button" title="Reset the network">
+                  <i class="material-icons">replay</i>
+                </button>
+                &nbsp&nbsp&nbsp&nbsp&nbsp&nbspTrain:
+                <button class="mdl-button mdl-js-button mdl-button--icon ui-playButton" id="play-pause-button" title="Train/Pause">
+                  <i class="material-icons">play_arrow</i>
+                  <i class="material-icons">pause</i>
+                </button>
+                </div>
+              </div>
+
+              <label id='Slider' for="noise">Separability:
+                  <div id="inner-slider">
+                    <input class="mdl-slider mdl-js-slider" type="range" id="noise" min="-40" max="0" step="5">
+                  </div>
+              </label>
+
+
+              <div id="Regs">Regularization:&nbsp&nbsp
+                  <div class="control ui-regularization">
+                    <div class="select">
+                      <select id="regularizations">
+                        <option class='option' value="none">None</option>
+                        <option class='option' value="Weight_Decay">Weight_Decay</option>
+                        <option class='option' value="Spectral_Decoupling">Spectral_Decoupling</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+
+            </div>
+
+          </div>
+
+
+            </div>
+          </div>
+
+          <div class="col-12 col-md">
+            <div class="h-100 w-md-10/12 w-xl-11/12 max-width-xnarrow">
+              <div class="h-100 d-flex flex-column justify-content-between">
+                  <div id='abstract'>
+                    <h1 class="balance-text  mb-0.75" style="">Gradient Starvation</h1>
+                      <div class="post-excerpt mb-1 js-excerpt-container js-widow"><p>We identify and formalize a fundamental gradient descent phenomenon resulting in a learning proclivity in neural networks. Gradient Starvation arises when the loss is minimized by capturing only a subset of features relevant for the task, despite the presence of other predictive features which fail to be discovered. We identify simple properties of learning dynamics during gradient descent that lead to Gradient Starvation and prove that such a situation can be expected given certain statistical structure in training data. Based on our proposed formalism, we introduce Spectral Decoupling, a novel regularization method that provably decouples the dynamics. We illustrate our findings with simple and real-world out-of-distribution (OOD) generalization experiments. </p></div>
+                      <a href="https://arxiv.org/abs/2011.09468" class="btn btn-padded" target="_blank" rel="noopener">ArXiv</a>
+                      <a href="https://github.com/mohammadpz/Gradient_Starvation" class="btn btn-padded" target="_blank" rel="noopener">Github</a>
+                  </div>
+                    <div class="post-header-date small-copy color-fg-60 mb-1 mb-md-10/12">
+    <time datetime="2020-11-01">Nov 19, 2020</time>
+    <div class="">Mohammad Pezeshki, Sékou-Oumar Kaba, Yoshua Bengio,</div>
+    <div class="">Aaron Courville, Doina Precup, Guillaume Lajoie</div>
+  </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  
+</header>
+
+<section class="container">
+<section class="content">
+
+<h2 id="try">Introduction</h2>
+
+<aside class="aside-left"><p class="side-note mb-0.25">An article about Hans published by the New York Times in September 1904:</p> <img src="GradientStarvation_files/nyt.jpg"  width="100%"></img> </aside>
+<p>In 1904, a horse named <em>Hans</em> attracted worldwide attention due to the belief that it was capable of doing arithmetic calculations <a href="http://bththerapy.com/bth/wp-content/uploads/2018/11/Clever-Hans.pdf">[1]</a>. Its trainer would ask Hans a question, and Hans would reply by tapping on the ground with its hoof. However, it was later revealed that the horse was only noticing subtle but distinctive signals in its trainer’s unconscious behavior, unbeknown to him, and not performing arithmetic.</p>
+
+<aside class="aside-right"><p class="side-note mb-0.25">In a task of pneumonia detection, a neural network achieves perfect accuracy by only latching on the shape of the metal token in the corner of the image. Surprisingly, the model ignores the lung area altogether <sup class="footnote-ref"><a href="https://journals.plos.org/plosmedicine/article?id=10.1371/journal.pmed.1002683">[3]</a></sup>: </p> <img src="GradientStarvation_files/xray.jpg"  width="90%"></img> </aside>
+<p>An analogous phenomenon has been noticed when training neural networks. State-of-the-art neural networks reportedly appear to focus on low-level superficial correlations rather than more abstract and robustly informative features of interest, e.g. <a href="https://arxiv.org/pdf/2004.07780.pdf">[2]</a>. The rationale behind such behavior is well known:
+<p class="gray">Given strongly-correlated and easy-to-learn features in training data, gradient descent is biased towards learning them first. In fact, gradient descent updates parameters predominantly in directions that only capture these dominant features, thus "starving" the gradient from other potentially informative features. 
+</p>
+
+<p>However, the notion of feature and its learning speed are rather vague. Here, we try to provide a formal treatment of the Gradient Starvation and seek to remedy that.</p>
+
+<h2>Gradient Starvation</h2>
+<p>Let's begin with a simple example. Consider the blue and red datapoints in the top figure. I actually spent half of my PhD trying to classify them from each other! It can be observed that as soon as the two classes are linearly separable (even with a slight margin), the learned decision boundary is almost linear and located very close to the datapoints (Check the paper for higher resolution plots.).</p>
+
+
+<p>To understand what is going on during the course of learning, we look into the dynamics of the gradient-descent on network's parameters \(\theta\):
+$$\dot{\theta} = -\eta \nabla_{\theta}\mathcal{L} = - \eta \nabla_{\theta}\hat{y} \  \nabla_{\hat{y}}\mathcal{L},$$</p>
+
+<aside class="aside-left"><p class="side-note mb-0.25"> The variational approximation of the cross-entropy loss uses the Legendre transformation with the following lower bound: </p> <div id="sketch"></div> </aside>
+<p>
+where \(\mathcal{L}\) is the cross-entropy loss, \(\eta\) is the learning rate, and \(\hat{y}\) is the network's output. Solving these dynamics is very difficult in general due to the non-linearity of both \(\nabla_{\theta}\hat{y}\) and \(\nabla_{\hat{y}}\mathcal{L}\) terms. Here, in the context of Neural Tangent Kernel <a href="https://papers.nips.cc/paper/2018/file/5a4be1fa34e62bb8a6ec6b91d2462f5a-Paper.pdf">[4]</a>, we linearize the network and approximate the loss to re-write the dynamics in the dual space (Please see the paper for more details).
+
+With the linearized network as \(\hat{y} = \Phi \theta\) and \(\Phi = \nabla_{\theta}\hat{y}\), we apply a singular value decomposition on \(\Phi\):
+<!-- $$\begin{eqnarray} 
+\Phi = &\sum& u_i s_i v_i^T,\ \text{such that,} \\
+&y^Tu_i&: \text{is the correlation with the target,}\\
+&s_i&: \text{is the the rate at which the feature is learned,}\\
+&v_i^T&: \text{indicates $i^{th} $predominant direction in random feature space,}\\
+&z_i&=s_iv_i^T \theta : \text{response of the network to each direction.}
+\end{eqnarray}$$ -->
+<img src="GradientStarvation_files/phi.svg" width="85%" style="margin: auto; margin-top: 20px; margin-bottom: 20px;"></img>
+
+In the paper, we show that the learning dynamics of \(z_i\)'s are coupled. Given certain assumptions, with two features \(z_1\) and \(z_2\), we show that \(\frac{d z_2}{d s_1} < 0\). It means that an increase in the dominancy of \(z_1\) has a detrimental effect on the learning of \(z_2\) even if \(s_2\) remains constant.
+
+As an example, let's fix \(s_2 = 2\) and vary \(s_1\) from 2 to 8. It can be seen that a larger \(s_1\) not only result in faster learning of \(z_1\), but <b>it also prevents \(z_2\) from learning</b>:
+<div class="wrapper">
+  <div id="graph"></div>
+  <div id="overlay"></div>
+</div>
+</p>
+
+<h2>Spectral Decoupling</h2>
+
+<p>
+It appears that Gradient Starvation happens because a network could become over-confident in its predictions by capturing only one or a few dominant features. Investigating the fixed points of the dynamics reveals that penalizing the confidence of the network could prevent Gradient Starvation. Specifically, adding an L2 penalty on the network's logits provably decouples the fixed points of the dynamics. As a result, we call this new regularization the <b>Spectral Decoupling (SD)</b>:
+<img src="GradientStarvation_files/sd.svg" width="85%" style="margin: auto; margin-top: 25px; margin-bottom: 20px;"></img>
+
+In the previous plot, try moving the slider to left and right. You observe that unlike vanilla cross-entropy, the fixed points of the dynamics are decoupled when SD is applied. SD leads to learning more features (\(z_i\)'s), as learning one feature does not interfere with another anymore. Such decoupling is manifested by learning a curved decision boundary in the classification task at the top when "SD" is chosen as the regularization. Whether it is useful or not for the generalization depends on the task structure and the assumptions we make about the test distribution. We discuss this shortly in the final section of this blog post, but before that, let's see a few more experimental results.</p>
+
+
+<h2 id="try">Experimental Results</h2>
+<h4 id="try">Colored MNIST with color bias</h4>
+
+<aside class="aside-right"> <p class="side-note mb-0.25">Results of the colored-MNIST classification task:</p> <img src="GradientStarvation_files/cm_res.svg"  width="95%"></img> </aside>
+<p>We conduct experiments on the Colored MNIST Dataset <a href="https://arxiv.org/pdf/1907.02893.pdf;">[5]</a>. The task is to predict labels \(y=-1\) for digits 0 to 4 and \(y=+1\) for digits 5 to 9. A color channel is artificially added to each example to deliberately impose a spurious correlation between the color and the label. However, an opposite correlation between the color and the label is present in the test set. Also, a 25 % label noise is added to both the training and test datasets, and hence an oracle that totally ignores the color should get \(\sim\)75 % accuracy, and it does, as shown in the table on the right. Empirical Risk Minimization (ERM - vanilla cross-entropy) performs well on the training set (91 %) but very bad on the test set (24 %). It is expected because the color feature is reversed in the test set, and we cannot expect the poor model to ignore the color! On the other hand, Invariant Risk Minimization (IRM) achieves good performance on the test set (67 %). However, SD also performs well (68 %) without requiring access to multiple training environments, unlike IRM.
+</p>
+<h5 id="try">How does SD learn to ignore the color? Short answer: It does not.</h5>
+<p>The following diagram provides a more fine-grained comparison between the three methods of ERM, IRM, and SD. As described on the left, the four squares represent four combinations of "shape" and "color" (For example, environment No. 2 is colored-digit, which is the same as the test set.).</p>
+<div class="wrapper">
+  <img id="cmnist_img" src="GradientStarvation_files/cmnist.svg" width="93%"></img>
+  <div id="cmnist"></div>
+</div>
+
+<p>Compare three values of <span class="color_red"> 9.4 %</span>, <span class="color_red"> 9.4 %</span> and <span class="color_gray"> 49.6 %</span>: Both ERM and SD have learned the color feature, but since it is inversely correlated with the label when only the color feature is provided, as expected, both ERM and SD perform poorly. Now compare the corresponding entropies <span class="color_dark_green"> 0.00</span> and <span class="color_green"> 0.41</span>: Although both ERM and SD have learned the color feature, ERM is much more confident in its predictions (zero entropy). As a consequence, when digit features are provided along with the color feature, ERM still performs poorly (<span class="color_orange">23.9 %</span>), but SD achieves significantly better results (<span class="color_blue">67.2 %</span>). However, note that IRM is indeed invariant to the color feature altogether which is better but it comes at the price that we need having access to multiple training environments.</p>
+
+<h5 id="try">How are different methods, including SD tuned?</h5>
+<p>In this task, since the training set and the test set are not IID, we cannot use the training set (or the validation set) for tuning hyperparameters. Therefore, by design, this task assumes access to the test set for hyperparameter tuning for all the reported methods. This is indeed cheating as we are not supposed to touch the test set in general. So these results should only be interpreted as a probe that shows the reliance on spurious correlation. We provide more discussion on this in the next section.</p>
+
+
+<h4 id="try">CelebA with gender bias</h4>
+<aside class="aside-right"> <p class="side-note mb-0.25">In the CelebA dataset, <span class="code">HairColor</span> is spuriously correlated with <span class="code">Gender</span>. The following figure is obtained from <a href="https://arxiv.org/pdf/2005.04345.pdf">[6]</a>:</p> <img src="GradientStarvation_files/celeba.svg"  width="95%"></img> </aside>
+<p>In another experiment, we classify CelebA images according to their hair color into two classes of blond or dark hair. However, <span class="code">Gender</span> \(\in\) {<span class="code">Male</span>, <span class="code">Female</span>} is spuriously correlated with the <span class="code">HairColor</span> \(\in\) {<span class="code">Blond</span> , <span class="code">Dark</span>} in the training data. The rarest group, which is blond males, builds less than 1 % of the training data.
+
+A model with the vanilla cross-entropy generalizes well on average but fails to generalize to the rarest group (blond male) with only 40.35 % accuracy. On the other hand, our proposed spectral decoupling improves the performance more than double to 83.24 %. For this task, we use a slightly different formulation of the Spectral Decoupling (see the paper for more details.).</p>
+<h2 id="try">Closing Thoughts</h2>
+
+<h5 id="try">On reliance upon spurious correlations and robustness </h5>
+<p>
+In the context of robustness in neural networks, state-of-the-art neural networks appear to naturally focus on low-level superficial correlations rather than more abstract and robustly informative features of interest. As we argue in this work, Gradient Starvation is likely an important factor contributing to this phenomenon and can result in adversarial vulnerability. Recent work such as <a href="https://arxiv.org/pdf/1911.01043.pdf">[7]</a> and <a href="https://arxiv.org/pdf/1811.00401.pdf">[8]</a> draw a similar conclusion and argue that "an insufficiency of the cross-entropy loss" causes excessive invariances to predictive features.
+</p>
+
+
+<h5 id="try">On implicit bias </h5>
+<p>
+It is evident to everyone that neural networks generalize surprisingly well in general. This is in spite of the fact that neural networks typically contain orders of magnitude more parameters than the number of examples in a training set and have sufficient capacity to fit a totally randomized dataset perfectly <a href="https://arxiv.org/pdf/1611.03530.pdf?from=timeline&isappinstalled=0">[9]</a>. The widespread explanation is that the gradient descent has a form of implicit bias towards learning simpler functions that generalize better according to Occam's razor. Our view of Gradient Starvation reinforces this explanation. In essence, when training and test data points are drawn from the same distribution, the top salient features are predictive in both sets. We conjecture that in such a scenario, by not learning the less salient features, Gradient Starvation naturally protects the network from overfitting.
+</p>
+
+
+<h5 id="try">On Gradient Starvation and no free lunch theorem </h5>
+<p>
+The <i>no free lunch</i> theorem states that "learning is impossible without making assumptions about training and test distributions". Probably, the most commonly used assumption of machine learning is the i.i.d. assumption, which assumes that both training and test data are identically distributed. However, in general, this assumption might not hold, and in many practical applications, there are predictive features in the training set that do not generalize to the test set.
+</p>
+
+<p>
+Now the question is <i>how to favor generalizable features over spurious features?</i> The most common approaches include <i>data augmentation, controlling the inductive biases, using regularizations,</i> and more recently <i>training using multiple environments</i>.
+</p>
+
+<aside class="aside-left"><p class="side-note mb-0.25">The chess example of <a href="https://arxiv.org/abs/2009.00329">[10]</a>:</p> <img src="GradientStarvation_files/chess.png"  width="95%"></img> </aside>
+<p>
+Here, we would like to elaborate on an interesting thought experiment of <a href="https://arxiv.org/abs/2009.00329">[10]</a>: Suppose a neural network is provided with a chess book containing examples of chess boards with the best movement indicated by a red arrow. The network can take two approaches: 1) To learn how to play chess, or 2) To learn just the red arrows. Either of these solutions results in zero training loss while only the former is generalizable. With no external knowledge or any inductive biases, the network learns the simpler solution which is to memorize the red arrows.
+</p>
+
+<p>
+Recent works assume that the network has also access to another chess book in which blue writings indicate the best movement. They each introduce novel methods to aggregate information from multiple training environments in a way that favors the generalizable / domain-agnostic / invariant solution.
+</p>
+
+<p>
+In this paper, we argue that even with having access to <b>only one</b> training environment, there is useful information in the training set that fails to be discovered due to Gradient Starvation. The information on how to actually play chess is already available in any of the chess books. Still, as soon as the network learns the red arrows, the network has no incentive for further learning because of Gradient Starvation. Therefore, learning the red arrows is not an issue per se, but not learning to play chess is.
+</p>
+
+<p>
+A better understanding and control of Gradient Starvation and its impact on generalization offers promising avenues to address this issue with minimal assumptions. Indeed, our Spectral Decoupling method requires an assumption about feature imbalance but not to pinpoint them exactly, relying on modulated learning dynamics to achieve balance. 
+</p>
+
+
+
+</section>
+</section>
+
+<footer class="post-footer">
+
+<div class="row">
+<hr class="footnotes-sep">
+
+</div>
+    
+<hr><div class="row">
+<div class="col"><div class="title">Acknowledgments</div></div>
+<div class="col footnote">
+<p>
+  We gratefully acknowledge the support of Google DeepMind and CIFAR. We would like to express our appreciation to Reyhane Askari Hemmat, Faruk Ahmed, Aristide Baratin, Ethan Caballero, Kostiantyn Lapchevskyi, Philemon Brakel, Philippe Hamel, Shibl Mourad, Charan Reddy, Arna Ghosh for their valuable and constructive suggestions and discussions. We would also like to thank Çağlar Gülçehre, Razvan Pascanu, Alex Graves, Sasha Vezhnevets, James Martens, Hossein Askari Hemmat, Madhu Advani, Rémi Le Priol, Ankesh Anand and Zac Kenton for their feedback.
+</p>
+</div>
+</div>
+
+
+<hr><div class="row">
+<div class="col"><div class="title">BibTeX citation</div></div>
+<div class="col footnote">
+<div class="code" style="font-size: 13px; margin-left: 15px !important;">
+  <br>
+  @article{pezeshki2020gradient,<br>
+  title={Gradient Starvation: A Learning Proclivity in Neural Networks},<br>
+  author={Pezeshki, Mohammad and Kaba, Sékou-Oumar and Bengio, Yoshua and Courville, Aaron and Precup, Doina and Lajoie, Guillaume},<br>
+  journal={arXiv preprint arXiv:2011.09468},<br>
+  year={2020}}<br>
+</div>
+</div>
+</div>
+
+
+<hr><div class="row">
+<div class="col"><div class="title">References</div></div>
+<div class="col footnote">
+<p>[1] Pfungst, Oskar. Clever Hans:(the horse of Mr. Von Osten.) a contribution to experimental animal and human psychology. Holt, Rinehart and Winston, 1911.
+<br>[2] Geirhos, Robert, et al. "Shortcut Learning in Deep Neural Networks." arXiv preprint arXiv:2004.07780 (2020).
+<br>[3] Zech, John R., et al. "Variable generalization performance of a deep learning model to detect pneumonia in chest radiographs: a cross-sectional study." PLoS medicine 15.11 (2018): e1002683
+<br>[4] Jacot, Arthur, Franck Gabriel, and Clément Hongler. "Neural tangent kernel: Convergence and generalization in neural networks." Advances in neural information processing systems. 2018.
+<br>[5] Arjovsky, Martin, et al. "Invariant risk minimization." arXiv preprint arXiv:1907.02893 (2019).
+<br>[6] Sagawa, Shiori, et al. "An Investigation of Why Overparameterization Exacerbates Spurious Correlations." arXiv preprint arXiv:2005.04345 (2020).
+<br>[7] Nar, Kamil, and S. Shankar Sastry. "Persistency of Excitation for Robustness of Neural Networks." arXiv preprint arXiv:1911.01043 (2019).
+<br>[8] Jacobsen, Jörn-Henrik, et al. "Excessive invariance causes adversarial vulnerability." arXiv preprint arXiv:1811.00401 (2018).
+<br>[9] Zhang, Chiyuan, et al. "Understanding deep learning requires rethinking generalization." arXiv preprint arXiv:1611.03530 (2016).
+<br>[10] Parascandolo, Giambattista, et al. "Learning explanations that are hard to vary." arXiv preprint arXiv:2009.00329 (2020).
+.</p>
+</div>
+</div>
+
+
+
+</footer>
+
+</article>
+
+
+  <script src="data.js"></script>
+  <script src="plotly-latest.min.js"></script>
+  <script src="bundle.js"></script>
+  <script src="analytics.js"></script>
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script type="text/javascript" id="MathJax-script" async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+
+
+</body></html>

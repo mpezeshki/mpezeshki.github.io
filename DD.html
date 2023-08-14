@@ -1,0 +1,394 @@
+<!-- Code partly obtained from Deep playground
+at https://github.com/tensorflow/playground with Apache License 2.0 -->
+<!DOCTYPE html>
+<!-- saved from url=(0032)https://openai.com/blog/GradientStarvation/ -->
+<html lang="en" class="js">
+
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-G2956GM9YZ"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag('js', new Date());
+
+      gtag('config', 'G-G2956GM9YZ');
+    </script>
+    <!-- <script async="" src="./DD_files/js"></script> -->
+
+    <title>Insights for Double Descent</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" type="text/css" href="./DD_files/all.css">
+
+    <!-- <link rel="stylesheet" href="bundle.css" type="text/css"> -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500|Material+Icons" rel="stylesheet" type="text/css">
+    <script src="./DD_files/lib.js"></script>
+    <script src="https://d3js.org/d3.v3.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.13.0/dist/katex.min.css" integrity="sha384-t5CR+zwDAROtph0PXGte6ia8heboACF9R5l/DiY+WZ3P2lxNgvJkQk5n7GPvLMYw" crossorigin="anonymous">
+
+    <!-- The loading of KaTeX is deferred to speed up page rendering -->
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.13.0/dist/katex.min.js" integrity="sha384-FaFLTlohFghEIZkw6VGwmf9ISTubWAVYW8tG8+w2LAIftJEULZABrF9PPFv+tVkH" crossorigin="anonymous"></script>
+
+    <!-- To automatically render math in text elements, include the auto-render extension: -->
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.13.0/dist/contrib/auto-render.min.js" integrity="sha384-bHBqxz8fokvgoJ/sc17HODNxa42TlaEhB+w8ZJXTc2nZf1VgEaFZeZvT4Mznfz0v" crossorigin="anonymous" onload="renderMathInElement(document.body);"></script>
+    <!--   <script type="text/javascript" id="MathJax-script" async
+   src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>-->
+
+    <!--   <script src="data.js"></script>
+  <script src="plotly-latest.min.js"></script>
+  <script src="bundle.js"></script>
+  <script src="analytics.js"></script>
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script type="text/javascript" id="MathJax-script" async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script> -->
+
+  </head>
+
+  <body class="browser-chrome os-mac-os engine-webkit">
+
+    <article class="post" id="post-GradientStarvation">
+
+      <header class="post-header post-header--cover bg-light-warm-gray bg-cover">
+        <div class="row py-10/12">
+        </div>
+        </nav>
+
+
+
+        <div class="container mt-10 mb-2 pb-1">
+          <div class="row">
+            <div class="col-12">
+              <div class="row">
+                <div class="col-6 col-xl-6 order-md-1">
+                  <div class="sticky sticky-top mt-ngutter pt-gutter">
+
+                    <div id="main-part" class="l--page">
+
+                      <!-- Output Column -->
+                      <div class="column output">
+                        <!-- <img src="DD_files/diagram.svg" class="svg_diagram"> -->
+                        <div id="heatmap" style="float: center"></div>
+                        <div id="heatmap_top_right" style="float: top"></div>
+                        <div id="heatmap_bottom_right" style="float: top"></div>
+                        <img src="DD_files/diagram.svg" class="svg_diagram">
+                      </div>
+
+                      <!-- curve Column -->
+                      <div class="column curve">
+                        <!-- <img src="DD_files/diagram.svg" class="svg_diagram"> -->
+                        <!--               <img id="panel_img" src="DD_files/nyt.jpg" width="100%">
+              <div id="panel"></div> -->
+
+                        <div class="wrapper">
+                          <div id="panel_rright"></div>
+                          <div id="panel_right"></div>
+                          <div id="panel_left"></div>
+
+                        </div>
+
+                      </div>
+
+                    </div>
+
+                    <div id="main-part2" class="l--page">
+                      <!-- Features Column -->
+                      <div class="column features">
+                        <div id="network"></div>
+                        <!-- <svg id="svg" width="0" height="0"></svg> -->
+
+
+                      </div>
+
+                    </div>
+
+
+                  </div>
+                </div>
+
+                <div class="col-12 col-md">
+                  <div class="h-100 w-md-10/12 w-xl-11/12 max-width-xnarrow">
+                    <div class="h-100 d-flex flex-column justify-content-between">
+                      <div id='abstract'>
+                        <h1 class="balance-text  mb-0.75" style="">Multi-scale Feature Learning Dynamics: Insights for Double Descent</h1>
+                        <div class="post-excerpt mb-1 js-excerpt-container js-widow">
+                          <p>
+                            <pp>
+                              We investigate the origins of the epoch-wise double descent, a phenomenon in which the test error undergoes two descents as the training time increases. By leveraging tools from statistical physics, we study a linear teacher-student setup exhibiting epoch-wise double descent similar to that in deep neural networks. In this setting, we derive closed-form analytical expressions for the evolution of generalization error over training. We find that double descent can be attributed to distinct features being learned at different scales: <b>as fast-learning features overfit, slower-learning features start to fit</b>, resulting in a second descent in test error. </pp>
+                          </p>
+                        </div>
+                        <a href="https://arxiv.org/abs/2112.03215" class="btn btn-padded" target="_blank" rel="noopener">Paper</a>
+                        <a href="https://github.com/mpezeshki/Epoch_wise_Double_Descent" class="btn btn-padded" target="_blank" rel="noopener">Code</a>
+                      </div>
+                      <div class="post-header-date small-copy color-fg-60 mb-1 mb-md-10/12">
+                        <time datetime="2020-11-01">December, 2021</time>
+                        <div class=""> Mohammad Pezeshki, Amartya Mitra, Yoshua Bengio, Guillaume Lajoie</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+      </header>
+
+      <section class="container">
+        <section class="content">
+
+          <h2 id="try">What is double descent?</h2>
+
+<!--             <div>
+            <aside class="aside-left">
+              <p class="side-note mb-0.25">
+                This is a test.
+              </p>
+              <div>
+                <img src="DD_files/0-.png" class="center50">
+              </div>
+            </aside>
+            </div> -->
+            <p>
+
+            One of the very first concepts that I learned in Machine Learning was the bias/variance trade-off meaning that the generalization curve is U-shaped. According to statistical learning theory, a small model under-fits, a reasonably-sized model fits just right, and a large model should over-fit.
+
+            <br></br>
+
+            However, that doesn't seem to be the case! Below, we have a ResNet18 trained on Cifar-10. In contrast to classical wisdom, increasing the model-size, beyond the overfitting regime, results in a second descent of the generalization error. <a href="https://arxiv.org/pdf/1812.11118.pdf">[Belkin et al.]</a> calls this behavior <em>"the double descent"</em>.
+
+          </p>
+            <div>
+            <img src="DD_files/1-.png" class="center70">
+            </div>
+          <p>
+
+            More recently, <a href="https://arxiv.org/pdf/1912.02292.pdf">[Nakkiran et al.]</a> reported that if we let the x-axis denote the training time (epochs),
+            a similar double descent occurs, which is referred to as <em>“the epoch-wise double descent”</em>.
+
+            Let’s look at an interesting experiment in <a href="https://arxiv.org/pdf/1912.02292.pdf">[Nakkiran et al.]</a>
+            that visualizes the interplay between the regularization strength and training time.
+
+          </p>
+            <div>
+            <img src="DD_files/2-.png" class="center140">
+            </div>
+          <p>
+
+            The above figure is a classification task on Cifar-10 using a large ResNet18.
+            <b>Left graph:</b> The color shades show the generalization. Yellow<span_yellow>llll</span_yellow> means a higher generalization error, while navy blue<span_navy>llll</span_navy> means a better generalization.
+            On the x-axis, we have the amount of L2 regularization, which can be thought of as regulating the model complexity.
+            The y-axis represents the training time.
+            <b>Right graph:</b> We plot three slices with different regularization amounts and visualize their evolution through time.
+
+          </p>
+          <ul>
+            <li>For a model with <span_blue>low complexity</span_blue>, we can see that it starts with a large error, and
+              as we train more, the generalization error decreases.</li>
+            <li>For a model with <span_orange>intermediate levels of complexity</span_orange>, the generalization curve follows the classical U-shaped curve.</li>
+            <li>Interestingly, models with higher <span_green>levels of complexity</span_green> exhibit an epoch-wise double descent curve.</li>
+          </ul>
+          <p>
+
+            It is pretty clear that there are things that we do not fully understand about
+            generalization in high-dimensional statistics. In this work, we investigate the reasons underlying such generalization behavior.
+
+          </p>
+
+          <h2 id="try">A Teacher-Student Framework</h2>
+          <p>
+
+            Here, we introduce a model that,
+          </p>
+          <ul>
+            <li>is complex enough to exhibit epoch-wise double descent, and yet,</li>
+            <li>is simple enough that it allows for analytical study.</li>
+          </ul>
+          <p>
+            To that end, we consider a linear teacher-student setup, where,
+          </p>
+          <ul>
+            <li>The teacher plays the role of the data generating process, and,</li>
+            <li>The student learns from the data generated by the teacher.</li>
+          </ul>
+          <p>
+
+            As shown in the diagram at the beginning of this post, a teacher generates pairs of \((x, y)\) from which the student learns.
+
+            <br></br>
+
+            An important remark here is that the matrix \(F\) modulates the student's access to latent features \(z\). The idea behind the matrix \(F\) is to simulate multi-scale feature learning similar to that of neural networks. Particularly, the condition number of \(F\) determines how much faster some features are learned than others. Similarly, in neural networks on vision tasks, it is well-known that, for example, color and texture are learned faster than more complex shape features.
+
+            <br></br>
+
+            In such a teacher-student setup,
+
+          </p>
+          <ul>
+            <li>A condition number of <span_dark_blue>\(\kappa=1\)</span_dark_blue> means that all the features are learned at the same rate.</li>
+            <li>A <span_light_blue>\(\kappa=100\)</span_light_blue>  means that the fastest learning subset of features are learned 100x faster than the slowest. (double descent is observed)</li>
+            <li>A <span_orange>\(\kappa=100000\)</span_orange> means that a subset of features is so slow that they do not get learned at all. (traditional U-shaped)</li>
+          </ul>
+
+          </p>
+            <div>
+            <img src="DD_files/4-.png" width="70%" class="center70">
+            </div>
+          <p>
+
+
+            To understand what is going on, we take a closer look at the generalization error.
+            We show that using the replica method of statistical physics <a href="https://www.google.ca/books/edition/Statistical_Mechanics_of_Learning/qVo4IT9ByfQC?hl=en&gbpv=1&dq=Statistical%20mechanics%20of%20learning&pg=PP1&printsec=frontcover">[Engel & Van den Broeck]</a>, the generalization error can be derived analytically, such that,
+
+            $$\mathcal{L}_G = \frac{1}{2}(1 + Q - 2R)$$
+
+            where \(\mathcal{L}_G\) is the generalization error and \(R\) and \(Q\) are defined as,
+
+            $$R := \frac{1}{d}{W^*}^TF\hat{W}, \qquad \qquad Q := \frac{1}{d}\hat{W}^TF^TF\hat{W}.$$
+
+            Both \(R\) and \(Q\) have clear interpretations; \(R\) is the dot-product between the teacher's weights \(W\) and the student's <o>modulated</i> weights \(F\hat{W}\), hence can be interpreted as the <b>alignment between the teacher and the student</b>. Similarly, \(Q\) can be interpreted as the <b>student's modulated norm</b>. The negative sign of \(R\) suggests that the larger \(R\) is, the smaller the generalization error gets. At the same time, \(Q\) appears with a positive sign suggesting the students with smaller (modulated) norm generalize better.
+
+              <br></br>
+
+              We encourage interested readers to visit the main paper in which we derive closed from expressions for \(R(t, \lambda)\) and \(Q(t, \lambda)\), describing their dynamics as a function of training time \(t\) and the regularization coefficient \(\lambda\). The take-home message is that R and Q can be decomposed into two components: A fast-learning component, and a slow-learning component. Essentially, as the fast-learning features overfit, slower-learning features start to fit, resulting in a second descent in test error (Eqs. 11-15 of the <a href="https://arxiv.org/pdf/2112.03215.pdf">paper</a>).
+
+              <br></br>
+
+
+              Now, recall the earlier heatmap plot we presented for a ResNet-18 on Cifar-10. We can plot the same heatmap but for our linear teacher-student model and using analytical expression:
+
+          </p>
+            <div>
+              <img src="DD_files/3-.png" class="center140">
+            </div>
+          <p>
+
+              A qualitative comparison shows a close match between the two! It is observed that in both experiments, a model with intermediate levels of regularization displays a typical overfitting behavior where the generalization error decreases first and then overfits. This is consistent with the common intuition that larger amounts of regularization act as early stopping. Put differently, learning of slow features requires large weights, which is penalized by the weight-decay. On the other hand, a model with a smaller amount of regularization exhibits the double descent generalization curve.
+
+          </p>
+
+          <h2 id="try">What comes next?</h2>
+          <p>
+
+          <aside class="aside-right">
+            <p class="side-note mb-0.25">
+
+              Grokking is a phenomenon in which the network abruptly learns to perfectly generalize to the test set, long after the training loss has reached very small values <a href="https://mathai-iclr.github.io/papers/papers/MATHAI_29_paper.pdf">[Power et al.]</a>:
+
+            </p>
+            <div>
+              <img src="DD_files/6-.png" class="center50">
+            </div>
+          </aside>
+
+          <p>
+            This blog post studied epoch-wise double descent by leveraging the replica method from statistical physics to characterize the generalization behavior using a set of informative macroscopic parameters (namely, R and Q). Crucially, these quantities can be used to study other learning dynamics phenomena and offer the possibility to be monitored during training, allowing a useful dichotomy of a model's key features influencing generalization. A future direction to study the generalization dynamics in cases where the first descent is so significant that the training loss decreases to very small values; So small that, either,
+          </p>
+          <ul>
+            <li>learning slower features becomes practically impossible due to the Gradient Starvation phenomenon <a href="https://papers.nips.cc/paper/2021/file/0987b8b338d6c90bbedd8631bc499221-Paper.pdf">[Pezeshki et al.]</a>, or</li>
+            <li>learning happens after a very large number of epochs. Such behavior, referred to as Grokking <a href="https://mathai-iclr.github.io/papers/papers/MATHAI_29_paper.pdf">[Power et al.]</a>, is a phenomenon in which the model abruptly learns to generalize perfectly but long after the training loss has reached very small values.</li>
+          </ul>
+          <p>
+
+            Finally, while our simple teacher-student setup exhibits certain intriguing phenomena of neural networks, its simplicity introduces several limitations. Studying finer details of the dynamics of neural networks requires more precise, non-linear, and multi-layered models, which introduce novel challenges that remain to be studied in future work.
+
+          </p>
+
+          <!-- <img src="DD_files/fig2_cd.png"  width="170%" class="center70"> -->
+
+        </section>
+      </section>
+
+      <footer class="post-footer">
+
+        <div class="row">
+          <hr class="footnotes-sep">
+        </div>
+
+        <hr>
+        <div class="row">
+          <div class="col">
+            <div class="title">Acknowledgments</div>
+          </div>
+          <div class="col footnote">
+            <p>
+              The authors are grateful to Samsung Electronics Co., Ldt., CIFAR, and IVADO for their funding and Calcul Québec and Compute Canada for providing us with the computing resources. We would further like to acknowledge the significance of discussions and supports from Reyhane Askari Hemmat. We also appreciate the invaluable help from Faruk Ahmed, David Yu-Tung Hui, Aristide Baratin, and Mohammad M. Ahmadpanah.
+            </p>
+          </div>
+        </div>
+
+
+        <hr>
+        <div class="row">
+          <div class="col">
+            <div class="title">BibTeX citation</div>
+          </div>
+          <div class="col footnote">
+            <div class="code" style="font-size: 13px; margin-left: 15px !important;">
+              @article{pezeshki2021multiscale,<br>
+              title={Multi-scale Feature Learning Dynamics: Insights for Double Descent},<br>
+              author={Mohammad Pezeshki and Amartya Mitra and Yoshua Bengio and Guillaume Lajoie},<br>
+              year={2021},
+              eprint={2112.03215},<br>
+              archivePrefix={arXiv},
+              primaryClass={cs.LG}}
+            </div>
+          </div>
+        </div>
+
+
+        <hr>
+        <div class="row">
+          <div class="col">
+            <div class="title">References</div>
+          </div>
+          <div class="col footnote">
+            <p>
+              
+              Belkin, Mikhail, Daniel Hsu, Siyuan Ma, and Soumik Mandal. "Reconciling modern machine-learning practice and the classical bias–variance trade-off." arXiv:1812.11118 (2018).
+
+            </p>
+            <p>
+
+              Nakkiran, Preetum, Gal Kaplun, Yamini Bansal, Tristan Yang, Boaz Barak, and Ilya Sutskever. "Deep double descent: Where bigger models and more data hurt." arXiv:1912.02292 (2019).
+
+            </p>
+            <p>
+              
+              Engel, Andreas, and Christian Van den Broeck. "Statistical mechanics of learning." Cambridge University Press (2001).
+
+            </p>
+            <p>
+
+              Pezeshki, Mohammad, Sékou-Oumar Kaba, Yoshua Bengio, Aaron Courville, Doina Precup, and Guillaume Lajoie. "Gradient starvation: A learning proclivity in neural networks." arXiv:2011.09468 (2020).
+
+            </p>
+            <p>
+
+              Power, Alethea, Yuri Burda, Harri Edwards, Igor Babuschkin, and Vedant Misra. "Grokking: Generalization beyond overfitting on small algorithmic datasets." In ICLR MATH-AI Workshop. (2021).
+
+            </p>
+          </div>
+        </div>
+
+
+
+      </footer>
+
+    </article>
+
+
+    <!-- <script src="basics.js"></script> -->
+    <script src="./DD_files/bundle.js"></script>
+    <!-- // <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script> -->
+
+
+  </body>
+
+</html>
